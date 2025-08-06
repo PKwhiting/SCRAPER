@@ -20,7 +20,15 @@ SCRAPER is a Python-based web scraping framework that uses Selenium and Bright D
    ```
 
 2. **Configure environment:**
-   - Set up your `.env` file with Bright Data credentials and any required paths.
+   - Create a `.env` file in the project root with your Bright Data credentials and required paths. Example:
+     ```env
+     BRIGHTDATA_USER=your_brightdata_username
+     BRIGHTDATA_PASSWORD=your_brightdata_password
+     BRIGHTDATA_PROXY_HOST=your_brightdata_proxy_host
+     BRIGHTDATA_PROXY_PORT=your_brightdata_proxy_port
+     CHROME_BINARY=/path/to/chrome
+     ```
+   - Download your Bright Data SSL certificate (`brightdata_certs.crt`) from the Bright Data dashboard and place it in the project root. This is required for secure proxy connections.
 
 3. **Run the scraper test:**
    ```bash
