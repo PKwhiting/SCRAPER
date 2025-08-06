@@ -3,3 +3,5 @@ requests
 langdetect
 backoff
 selenium
+python-dotenv
+webdriver-manager

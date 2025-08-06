@@ -4,13 +4,14 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 import zipfile
+import os
+import logging
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+import zipfile
 import re
-
-logger = logging.getLogger(__name__)
-
 class SeleniumManager:
-
-
     def __init__(self):
         self.driver = None
         self.current_proxy = None
@@ -99,30 +100,44 @@ class SeleniumManager:
         if self.driver is None:
             try:
                 chrome_options = Options()
-                chrome_options.add_argument("--headless")
+                chrome_options.add_argument("--headless=new")  # Use new headless mode for Chromium 109+
                 chrome_options.add_argument("--no-sandbox")
                 chrome_options.add_argument("--disable-dev-shm-usage")
                 chrome_options.add_argument("--disable-gpu")
+                chrome_options.add_argument("--remote-debugging-port=9222")
                 chrome_options.add_argument("--window-size=1920,1080")
                 chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
                 chrome_options.add_argument('--disable-blink-features=AutomationControlled')
-                
+                # Set Chrome binary location from .env
+                chrome_binary = os.getenv("CHROME_BINARY")
+                chrome_version = None
+                if chrome_binary:
+                    chrome_options.binary_location = chrome_binary
+                    # Get Chrome version from binary
+                    import subprocess
+                    try:
+                        version_output = subprocess.check_output([chrome_binary, "--version"]).decode()
+                        # Example output: 'Google Chrome 139.0.7258.66\n'
+                        import re
+                        match = re.search(r'(\d+\.\d+\.\d+\.\d+)', version_output)
+                        if match:
+                            chrome_version = match.group(1)
+                    except Exception as e:
+                        logging.getLogger(__name__).warning(f"Could not determine Chrome version: {e}")
+
                 if proxy_url:
                     self.proxy_extension_zip = self._create_proxy_extension(proxy_url)
                     chrome_options.add_extension(self.proxy_extension_zip)
-                
-                chrome_binary = os.environ.get('CHROME_BINARY')
-                if chrome_binary:
-                    chrome_options.binary_location = chrome_binary
 
-                chromedriver_path = os.environ.get('CHROMEDRIVER_PATH')
-                service = Service(executable_path=chromedriver_path)
-                
+                if chrome_version:
+                    service = Service(ChromeDriverManager(driver_version=chrome_version).install())
+                else:
+                    service = Service(ChromeDriverManager().install())
                 self.driver = webdriver.Chrome(service=service, options=chrome_options)
                 self.current_proxy = proxy_url
-                logger.info(f"Chrome driver started successfully (Proxy: {proxy_url or 'None'})")
+                logging.getLogger(__name__).info(f"Chrome driver started successfully (Proxy: {proxy_url or 'None'})")
             except Exception as e:
-                logger.error(f"Failed to start Chrome driver: {str(e)}")
+                logging.getLogger(__name__).error(f"Failed to start Chrome driver: {str(e)}")
                 raise
         return self.driver
 
