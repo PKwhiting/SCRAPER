@@ -1,5 +1,5 @@
-from .services.selenium import SeleniumManager
-from .services.brightdata import BrightDataService
+from .services import SeleniumManager
+from .services import BrightDataService
 
 class Scraper:
 
