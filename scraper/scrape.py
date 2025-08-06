@@ -4,9 +4,10 @@ from selenium import webdriver
 
 class Scraper:
 
-    def __init__(self):
+    def __init__(self, headless=True):
         self.selenium_manager = SeleniumManager()
         self.bright_data_service = BrightDataService()
+        self.headless = headless
 
     def fetch(self, url) -> webdriver.Chrome:
         driver = self._get_driver()
@@ -22,5 +23,5 @@ class Scraper:
     def _create_driver(self):
         session_id = self.bright_data_service.generate_session_id()
         proxy_url = self.bright_data_service.get_proxy_url(session_id)
-        driver = self.selenium_manager.get_driver(proxy_url=proxy_url)
+        driver = self.selenium_manager.get_driver(proxy_url=proxy_url, headless=self.headless)
         return driver

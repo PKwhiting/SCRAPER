@@ -12,7 +12,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 import zipfile
 import re
 class SeleniumManager:
-    def __init__(self):
+    def __init__(self, ):
         self.driver = None
         self.current_proxy = None
         self.proxy_extension_zip = None
@@ -93,13 +93,15 @@ class SeleniumManager:
             
         return extension_path
 
-    def start_driver(self, proxy_url=None):
+    def start_driver(self, proxy_url=None, headless=True):
         if self.driver is not None and self.current_proxy != proxy_url:
             self.close()
 
         if self.driver is None:
             try:
                 chrome_options = Options()
+                if headless:
+                    chrome_options.add_argument("--headless=new")  # Use new headless mode for Chromium 109+
                 chrome_options.add_argument("--headless=new")  # Use new headless mode for Chromium 109+
                 chrome_options.add_argument("--no-sandbox")
                 chrome_options.add_argument("--disable-dev-shm-usage")
@@ -141,8 +143,8 @@ class SeleniumManager:
                 raise
         return self.driver
 
-    def get_driver(self, proxy_url=None):
-        return self.start_driver(proxy_url=proxy_url)
+    def get_driver(self, proxy_url=None, headless=True):
+        return self.start_driver(proxy_url=proxy_url, headless=headless)
 
     def close(self):
         if self.driver:
