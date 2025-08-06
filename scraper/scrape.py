@@ -1,5 +1,6 @@
 from .services import SeleniumManager
 from .services import BrightDataService
+from selenium import webdriver
 
 class Scraper:
 
@@ -7,13 +8,13 @@ class Scraper:
         self.selenium_manager = SeleniumManager()
         self.bright_data_service = BrightDataService()
 
-    def fetch(self, url):
+    def fetch(self, url) -> webdriver.Chrome:
         driver = self._get_driver()
         if not driver:
             raise Exception("Failed to initialize Selenium driver.")
         
         driver.get(url)
-        return driver.page_source
+        return driver
 
     def _get_driver(self):
         return self._create_driver()

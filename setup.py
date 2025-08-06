@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="scraper",
-    version="0.1.1",
+    version="0.1.3",
     packages=find_packages(),
     install_requires=[
         "beautifulsoup4",
@@ -24,4 +24,6 @@ setup(
     author="PK Whiting",
     description="Utility functions for scraping",
     url="https://github.com/PKWhiting/SCRAPER",
+    include_package_data=True,
+    data_files=[('', ['setup_chrome.sh'])],
 )
