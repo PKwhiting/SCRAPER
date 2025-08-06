@@ -13,6 +13,7 @@ class Scraper:
             raise Exception("Failed to initialize Selenium driver.")
         
         driver.get(url)
+        return driver.page_source
 
     def _get_driver(self):
         return self._create_driver()
